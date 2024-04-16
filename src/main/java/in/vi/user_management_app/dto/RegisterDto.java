@@ -7,6 +7,8 @@ public class RegisterDto {
     private Long phno;
     private String pwd;
     private Integer countryId;
+    private Integer stateId;
+    private Integer cityId;
 
     public String getName() {
         return name;
@@ -64,7 +66,6 @@ public class RegisterDto {
         this.cityId = cityId;
     }
 
-    private Integer stateId;
-    private Integer cityId;
+
 
 }

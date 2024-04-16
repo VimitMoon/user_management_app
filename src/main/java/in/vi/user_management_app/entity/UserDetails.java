@@ -23,6 +23,8 @@ public class UserDetails {
 
     private Long phno;
 
+    private String oldPwd;
+
     private String pwdUpdated;
 /*
 
@@ -137,5 +139,13 @@ public class UserDetails {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public String getOldPwd() {
+        return oldPwd;
+    }
+
+    public void setOldPwd(String oldPwd) {
+        this.oldPwd = oldPwd;
     }
 }

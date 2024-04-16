@@ -6,6 +6,39 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+/*
+
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+import java.util.Properties;
+
+public class EmailUtils {
+
+    public static void sendEmail() {
+        JavaMailSender mailSender = getJavaMailSender();
+        // Send email using mailSender
+    }
+
+    private static JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        mailSender.setUsername("your-email@gmail.com");
+        mailSender.setPassword("your-password");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true"); // Enable STARTTLS
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com"); // Trust the server
+
+        return mailSender;
+    }
+}
+
+
+ */
 @Component
 public class EmailUtils {
 

@@ -13,6 +13,16 @@ public class UserDto {
 
     private Long phno;
 
+    private String oldPwd;
+
+    public String getOldPwd() {
+        return oldPwd;
+    }
+
+    public void setOldPwd(String oldPwd) {
+        this.oldPwd = oldPwd;
+    }
+
     private String pwdUpdated;
 
     private Integer countryId;

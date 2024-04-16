@@ -40,7 +40,10 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private UserDetailsRepo userDetailsRepo;
 
+    @Autowired
     private EmailUtils emailUtils;
+
+    private QuoteDto[] quotations = null;
 
     @Override
     public Map<Integer, String> getCountries() {
@@ -105,12 +108,15 @@ public class UserServiceImpl implements UserService{
         BeanUtils.copyProperties(userDetails,userDto);
 
     */
+        if (userDetails != null) {
+            ModelMapper mapper = new ModelMapper();
+            UserDto userDto = mapper.map(userDetails, UserDto.class);
 
-        ModelMapper mapper = new ModelMapper();
-
-       UserDto userDto = mapper.map(userDetails,UserDto.class);
-
-        return userDto;
+            return userDto;
+        }
+        else {
+            return null;
+        }
     }
 
     @Override
@@ -123,7 +129,7 @@ public class UserServiceImpl implements UserService{
 
         ModelMapper mapper = new ModelMapper();
 
-        UserDetails user = mapper.map(regDto,UserDetails.class);
+        UserDetails userDetails = mapper.map(regDto,UserDetails.class);
 
         // association mapping
         Country country = countryRepo.findById(regDto.getCountryId()).orElseThrow();
@@ -132,19 +138,19 @@ public class UserServiceImpl implements UserService{
 
         City city = cityRepo.findById(regDto.getCityId()).orElseThrow();
 
-        user.setCountry(country);
-        user.setState(state);
-        user.setCity(city);
+        userDetails.setCountry(country);
+        userDetails.setState(state);
+        userDetails.setCity(city);
 
-        user.setPwd(generateRandomPwd());
-        user.setPwdUpdated("NO");
+        userDetails.setPwd(generateRandomPwd());
+        userDetails.setPwdUpdated("NO");
 
         // user registration
-        UserDetails savedDetails = userDetailsRepo.save(user);
+        UserDetails savedDetails = userDetailsRepo.save(userDetails);
 
         String subject = "User Registration";
 
-        String body = "Your temporary password is : "+ user.getPwd();
+        String body = "Your temporary password is : "+ userDetails.getPwd();
 
         emailUtils.sendEmail(regDto.getEmail(),subject,body);
 
@@ -154,17 +160,15 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserDto getUser(LoginDto loginDto) {
 
-        UserDetails user = userDetailsRepo.findByEmailAndPwd(loginDto.getEmail(), loginDto.getPwd());
+        UserDetails userDetails = userDetailsRepo.findByEmailAndPwd(loginDto.getEmail(), loginDto.getPwd());
 
-        if(user == null ) {
+        if(userDetails == null ) {
             return null;
         }
 
         ModelMapper mapper = new ModelMapper();
 
-        UserDto loggedUser = mapper.map(user,UserDto.class);
-
-        return loggedUser;
+        return mapper.map(userDetails,UserDto.class);
     }
 
     @Override
@@ -181,15 +185,13 @@ public class UserServiceImpl implements UserService{
 
             userDetailsRepo.save(userDetails);
 
+            return true;
+
         /*
         ModelMapper mapper = new ModelMapper();
 
         ResetPwdDto loggedUser = mapper.map(userDetails,ResetPwdDto.class);
-
-
          */
-
-            return true;
         }
 
         return false;
@@ -198,31 +200,33 @@ public class UserServiceImpl implements UserService{
     @Override
     public String getQuote() {
 
-        String url = "https://type.fit/api/quotes";
-            QuoteDto[] quotations = null;
+        if (quotations==null) {
+            // 3rd party url
+            String url = "https://type.fit/api/quotes";
 
-        // web service call
+
+            // web service call
             RestTemplate rt = new RestTemplate();
 
+            // return response body
             ResponseEntity<String> forEntity = rt.getForEntity(url,String.class);
 
             String responseBody = forEntity.getBody();
 
             // converting text data into java object by using ObjectMapper provided by Jackson Api
             ObjectMapper mapper = new ObjectMapper();
-
             try {
+                // converting response body into quoteDto Array
                 quotations = mapper.readValue(responseBody, QuoteDto[].class);
             } catch (Exception e)
             {
                 e.printStackTrace();
             }
+        }
 
             Random r = new Random();
 
-            int index = r.nextInt(quotations.length);
-
-
+            int index = r.nextInt(quotations.length-1);
 
             return quotations[index].getText();
 
